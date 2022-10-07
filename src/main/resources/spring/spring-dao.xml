@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- #######################################
+load jdbc.properties and mybatis-config.xml 
+create dataSource connection pool
+configure connection between jdbc and mybatis
+##########################################-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+    <!-- mybatis setup -->
+ 	<!-- 1)jdbc external connection properties: ${url} classpath= src/main/resources -->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+    
+    <!-- 2)idbc connection pool -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+    	<!-- setup connection pool properties -->
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="driverClass" value="${jdbc.driver}"/>
+        
+        <!-- c3p0 connection pool private property -->
+        <property name="maxPoolSize" value="30"/>
+        <property name="minPoolSize" value="10"/>
+        <!-- disable auto-commit after closing -->
+        <property name="autoCommitOnClose" value="false"/>
+        <!-- connection timeout timer -->
+        <property name="checkoutTimeout" value="10000"/>
+        <!-- failed connection retry attempts -->
+        <property name="acquireRetryAttempts" value="2"/>
+    </bean>
+    <!-- 3)SqlSessionFactory Bean-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    	<!-- import idbc connection pool -->
+        <property name="dataSource" ref="dataSource"/>
+        <!-- setup MyBaties files:mybatis-config.xml -->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <!-- scan entity package and use alias -->
+        <property name="typeAliasesPackage" value="com.project1.o2o.entity"/>
+        <!-- scab xml file for sql settings: mapper -->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+    </bean>
+    <!-- 4)configure Dao connection package, create dao connection port, import into spring container  -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    	<!-- import sqlSessionFactory -->
+    	<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+    	<!-- define dao connection package to scan -->
+    	<property name="basePackage" value="com.project1.o2o.dao" />
+    </bean>
+
+</beans>

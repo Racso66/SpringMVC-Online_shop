@@ -104,4 +104,24 @@ public class ImageUtil {
 		.outputQuality(0.8f)
 		.toFile("C:\\Users\\SAO\\Desktop\\Dinoland pics\\2new.jpg");
 	}
+	
+	/**
+	 * determine if path is file path or directory path,
+	 * if path is file path then delete the file,
+	 * if path is directory then delete directory including all content under the directory
+	 * 
+	 * @param path
+	 */
+	public static void deleteFileOrPath(String path) {
+		File fileOrPath = new File(PathUtil.getImgPath() + path);
+		if(fileOrPath.exists()) {
+			if(fileOrPath.isDirectory()) {
+				File files[] = fileOrPath.listFiles();
+				for(int i = 0; i < files.length; i++) {
+					files[i].delete();
+				}
+			}
+			fileOrPath.delete();
+		}
+	}
 }

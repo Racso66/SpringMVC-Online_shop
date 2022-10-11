@@ -12,7 +12,15 @@ public interface ShopDao {
 	 * file
 	 */
 	int insertShop(Shop shop);
-
+	
+	/**
+	 * Search for shop by using shop id
+	 * 
+	 * @param shopId
+	 * @return
+	 */
+	Shop queryByShopId(long shopId);
+	
 	/*
 	 * Update existing shops
 	 * 

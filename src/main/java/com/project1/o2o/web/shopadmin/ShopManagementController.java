@@ -49,6 +49,28 @@ public class ShopManagementController {
 	@Autowired
 	private AreaService areaService;
 	
+	@RequestMapping(value = "/getshopbyid", method=RequestMethod.GET)
+	@ResponseBody
+	private Map<String, Object> getShopById(HttpServletRequest request){
+		Map<String, Object> modelMap = new HashMap<String, Object>();
+		Long shopId = HttpServletRequestUtil.getLong(request, "shopId");
+		if(shopId > -1) { //received from front end
+			try {
+				Shop shop = shopService.getByShopId(shopId);
+				List<Area> areaList = areaService.getAreaList();
+				modelMap.put("shop", shop);
+				modelMap.put("areaList", areaList);
+				modelMap.put("success",true);
+			} catch(Exception e){
+				modelMap.put("success",false);
+				modelMap.put("errMsg",e.toString());
+			}
+		} else {
+			modelMap.put("success",false);
+			modelMap.put("errMsg","empty shopId");
+		}
+		return modelMap;
+	}
 	@RequestMapping(value = "/getshopinitinfo", method=RequestMethod.GET)
 	@ResponseBody
 	private Map<String, Object> getShopInitInfo(){
@@ -82,7 +104,7 @@ public class ShopManagementController {
 		String shopStr = HttpServletRequestUtil.getString(request, "shopStr");
 		ObjectMapper mapper = new ObjectMapper();
 		Shop shop = null;
-		try {
+		try {//convert shop info to Shop.class
 			shop = mapper.readValue(shopStr, Shop.class);
 		} catch (Exception e) {
 			modelMap.put("success", false);
@@ -101,15 +123,23 @@ public class ShopManagementController {
 		}
 		// 2.register shop
 		if (shop!= null && shopImg !=null) {
-			// initialize owner TODO Session
-			UserInfo owner = new UserInfo();
-			owner.setUserId(1L);
+			// initialize owner 
+			// Session [Session id stored in cookie and returned to client, Tomcat session expire time is 30min]
+			UserInfo owner = (UserInfo) request.getSession().getAttribute("user");
 			shop.setOwner(owner);
 			ShopExecution se;
 			try {
 				se = shopService.addShop(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
 				if(se.getState() == ShopStateEnum.CHECK.getState()) {
 					modelMap.put("success", true);
+					//List of shop that can be modified by this user
+					@SuppressWarnings("unchecked")
+					List<Shop> shopList = (List<Shop>) request.getSession().getAttribute("shopList");
+					if(shopList == null || shopList.size() == 0) {
+						shopList = new ArrayList<Shop>();
+					} 
+					shopList.add(se.getShop());
+					request.getSession().setAttribute("shopList", shopList);
 				} else {
 					modelMap.put("success", false);
 					modelMap.put("errMsg", se.getStateInfo());
@@ -125,6 +155,64 @@ public class ShopManagementController {
 		} else {
 			modelMap.put("success", false);
 			modelMap.put("errMsg", "Please enter shop information");
+			return modelMap;
+		}
+		// 3.return result [Included in all try catch blocks]
+	}
+	
+	@RequestMapping(value = "/modifyshop", method = RequestMethod.POST)
+	@ResponseBody
+	private Map<String, Object> modifyShop(HttpServletRequest request){
+		Map<String, Object> modelMap = new HashMap<String, Object>();
+		if(!CodeUtil.checkVerifyCode(request)) {
+			modelMap.put("success", false);
+			modelMap.put("errMsg", "Incorrect Verification Code");
+			return modelMap;
+		}
+		// 1.receive and convert parameters, including shop info and image info
+		// Uses fasterXML.Jackson
+		String shopStr = HttpServletRequestUtil.getString(request, "shopStr");
+		ObjectMapper mapper = new ObjectMapper();
+		Shop shop = null;
+		try {//convert shop info to Shop.class
+			shop = mapper.readValue(shopStr, Shop.class);
+		} catch (Exception e) {
+			modelMap.put("success", false);
+			modelMap.put("errMsg", e.getMessage());
+			return modelMap;
+		}
+		CommonsMultipartFile shopImg = null;
+		CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+		if(commonsMultipartResolver.isMultipart(request)) {
+			MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+			shopImg = (CommonsMultipartFile) multipartHttpServletRequest.getFile("shopImg");
+		}
+		// 2. modify shop
+		// don't need shop thumbnail image, shop id cannot be null
+		if (shop!= null && shop.getShopId() !=null) {
+			ShopExecution se;
+			try {
+				if(shopImg == null) 
+					se = shopService.modifyShop(shop, null, null);
+				else
+					se = shopService.modifyShop(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
+				if(se.getState() == ShopStateEnum.SUCCESS.getState()) {
+					modelMap.put("success", true);
+				} else {
+					modelMap.put("success", false);
+					modelMap.put("errMsg", se.getStateInfo());
+				}
+			} catch (ShopOperationException e) {
+				modelMap.put("success", false);
+				modelMap.put("errMsg", e.getMessage());
+			} catch (IOException e) {
+				modelMap.put("success", false);
+				modelMap.put("errMsg", e.getMessage());
+			}
+			return modelMap;
+		} else {
+			modelMap.put("success", false);
+			modelMap.put("errMsg", "Please enter shop id");
 			return modelMap;
 		}
 		// 3.return result [Included in all try catch blocks]

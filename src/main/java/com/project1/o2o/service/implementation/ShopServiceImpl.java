@@ -2,6 +2,7 @@ package com.project1.o2o.service.implementation;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,20 +15,38 @@ import com.project1.o2o.enums.ShopStateEnum;
 import com.project1.o2o.exceptions.ShopOperationException;
 import com.project1.o2o.service.ShopService;
 import com.project1.o2o.util.ImageUtil;
+import com.project1.o2o.util.PageCalculator;
 import com.project1.o2o.util.PathUtil;
 
 @Service
-public class ShopServiceImpl implements ShopService{
+public class ShopServiceImpl implements ShopService {
 	@Autowired
 	private ShopDao shopDao;
+	
+	@Override
+	public ShopExecution getShopList(Shop shopCondition, int pageIndex, int pageSize) {
+		int rowIndex = PageCalculator.calculateRowIndex(pageIndex, pageSize);
+		List<Shop> shopList = shopDao.queryShopList(shopCondition, rowIndex, pageSize);
+		int count = shopDao.queryShopCount(shopCondition);
+		ShopExecution se = new ShopExecution();
+		if(shopList != null) {
+			se.setShopList(shopList);
+			se.setCount(count);
+		}else {
+			se.setState(ShopStateEnum.INNER_ERROR.getState());
+		}
+		return se;
+	}
+	
 	@Override
 	@Transactional
-	public ShopExecution addShop(Shop shop, InputStream shopImgInputStream, String fileName) throws ShopOperationException{
+	public ShopExecution addShop(Shop shop, InputStream shopImgInputStream, String fileName)
+			throws ShopOperationException {
 		// Check validity of parameters passed in, area, category..
-		if(shop==null) {
+		if (shop == null) {
 			return new ShopExecution(ShopStateEnum.NULL_SHOP);
 		}
-		
+
 		try {
 			// Set initial values for shop info
 			shop.setEnableStatus(0);
@@ -35,64 +54,66 @@ public class ShopServiceImpl implements ShopService{
 			shop.setLastEdited(new Date());
 			// add shop info
 			int effectedNum = shopDao.insertShop(shop);
-			if(effectedNum <= 0) { //runtime exception will cause transaction to terminate and roll back
+			if (effectedNum <= 0) { // runtime exception will cause transaction to terminate and roll back
 				throw new ShopOperationException("Failed to create shop");
 			} else {
-				if(shopImgInputStream != null) {
-					//store img
+				if (shopImgInputStream != null) {
+					// store img
 					try {
-						addShopImg(shop,shopImgInputStream, fileName);
+						addShopImg(shop, shopImgInputStream, fileName);
 					} catch (Exception e) {
 						throw new ShopOperationException("addShopImg error:" + e.getMessage());
 					}
 					// update image address
 					effectedNum = shopDao.updateShop(shop);
-					if(effectedNum <= 0) { 
+					if (effectedNum <= 0) {
 						throw new ShopOperationException("Failed to update image address");
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new ShopOperationException("addShop error:" + e.getMessage());
 		}
-		return new ShopExecution(ShopStateEnum.CHECK,shop);
+		return new ShopExecution(ShopStateEnum.CHECK, shop);
 	}
+
 	private void addShopImg(Shop shop, InputStream shopImgInputStream, String fileName) {
 		// acquire shopimg relative address
 		String dest = PathUtil.getShopImagePath(shop.getShopId());
 		String shopImgAddr = ImageUtil.generateThumbnail(shopImgInputStream, fileName, dest);
 		shop.setShopImg(shopImgAddr);
 	}
-	
+
 	@Override
 	public Shop getByShopId(long shopId) {
 		return shopDao.queryByShopId(shopId);
 	}
-	
+
 	@Override
-	public ShopExecution modifyShop(Shop shop, InputStream shopImgInputStream, String fileName)throws ShopOperationException {
-		if(shop == null || shop.getShopId() == null) {
+	public ShopExecution modifyShop(Shop shop, InputStream shopImgInputStream, String fileName)
+			throws ShopOperationException {
+		if (shop == null || shop.getShopId() == null) {
 			return new ShopExecution(ShopStateEnum.NULL_SHOP);
 		} else {
-			//1. Determine if there is an image to process
+			// 1. Determine if there is an image to process
 			try {
-				if(shopImgInputStream != null && fileName != null && !"".equals(fileName)) {
+				if (shopImgInputStream != null && fileName != null && !"".equals(fileName)) {
 					Shop tempShop = shopDao.queryByShopId(shop.getShopId());
-					if(tempShop.getShopImg() != null) {
+					if (tempShop.getShopImg() != null) {
 						ImageUtil.deleteFileOrPath(tempShop.getShopImg());
 					}
 					addShopImg(shop, shopImgInputStream, fileName);
 				}
-				//2. Update shop information
+				// 2. Update shop information
 				shop.setLastEdited(new Date());
-				int effectedNum = shopDao.updateShop(shop); //usual get a line of value
-				if(effectedNum <= 0) {
+				int effectedNum = shopDao.updateShop(shop); // usual get a line of value
+				if (effectedNum <= 0) {
 					return new ShopExecution(ShopStateEnum.INNER_ERROR);
 				} else {
 					shop = shopDao.queryByShopId(shop.getShopId());
 					return new ShopExecution(ShopStateEnum.SUCCESS, shop);
 				}
-			} catch(Exception e) {
+			} catch (Exception e) {
 				throw new ShopOperationException("modifyShop error:" + e.getMessage());
 			}
 		}

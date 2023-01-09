@@ -9,7 +9,7 @@
 
 $(function() {
 	var shopId = getQueryString('shopId');
-	var isEdit = shopId?true:flase;//true if not empty, used to determine register or modify
+	var isEdit = shopId?true:false;//true if not empty, used to determine register or modify
 	var initUrl = '/o2o/shopadmin/getshopinitinfo';
 	var registerShopUrl = '/o2o/shopadmin/registershop';
 	var shopInfoUrl = '/o2o/shopadmin/getshopbyid?shopId=' + shopId;

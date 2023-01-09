@@ -7,9 +7,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(value = "shopadmin",method = {RequestMethod.GET})
 public class ShopaAdminController {
-	@RequestMapping(value = "/shopoperation")
+	@RequestMapping(value = "/shopoperation") //view resolver set in spring-web.xml
 	public String shopOperation() {
 		return "shop/shopoperation";
 	}
 	
+	@RequestMapping(value = "/shoplist")
+	public String shopList() {
+		return "shop/shoplist";
+	}
 }

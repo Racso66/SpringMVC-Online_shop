@@ -8,6 +8,15 @@ import com.project1.o2o.exceptions.ShopOperationException;
 
 public interface ShopService {
 	/**
+	 * Split page information and return shop lists according to shopCondition
+	 * @param shopCondition
+	 * @param pageIndex changed to pageIndex because front end only uses pages. Made pageCalculator util for transition
+	 * @param pageSize
+	 * @return
+	 */
+	public ShopExecution getShopList(Shop shopCondition, int pageIndex, int pageSize);
+	
+	/**
 	 * get shop information through shopId
 	 * 
 	 * @param shopId

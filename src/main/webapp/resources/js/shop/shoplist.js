@@ -38,7 +38,7 @@ $(function(){
 	}
 	function goShop(status, id){
 		if (status == 1){
-			return '<a href="/o2o/shop/shopmanage?shopId=' + id + '">Enter</a>';
+			return '<a href="/o2o/shopadmin/shopmanagement?shopId=' + id + '">Enter</a>';
 		} else{
 			return '';
 		}

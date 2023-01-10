@@ -14,7 +14,7 @@ $(function(){
 		});
 	}
 	function handleUser(data){
-		$('#user-name').text(data.name);
+		$('#user-name').text(data.userName);
 	}
 	function handleList(data){
 		var html ='';
@@ -38,7 +38,7 @@ $(function(){
 	}
 	function goShop(status, id){
 		if (status == 1){
-			return '<a href="o2o/shop/shopmanage?shopId=' + id + '">Enter</a>';
+			return '<a href="/o2o/shop/shopmanage?shopId=' + id + '">Enter</a>';
 		} else{
 			return '';
 		}

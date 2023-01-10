@@ -58,7 +58,7 @@ public class ShopManagementController {
 			Object currentShopObj = request.getSession().getAttribute("currentShop");
 			if(currentShopObj == null) { //If direct visit the site without login or shopList urls, redirect to shopList
 				modelMap.put("redirect", true);
-				modelMap.put("url", "o2o/shop/shoplist");
+				modelMap.put("url", "/o2o/shopadmin/shoplist");
 			} else { //if already logged in, no need to redirect
 				Shop currentShop = (Shop) currentShopObj;
 				modelMap.put("redirect", false);

@@ -11,4 +11,7 @@ public interface ProductCategoryService {
 	 * @return List<ProductCategory>
 	 */
 	List<ProductCategory> getProductCategoryList(long shopId);
+	
+	ProductCategoryExecution batchAddProductCategory(List<ProductCategory> productCategoryList)
+		throws ProductCategoryOperationException;
 }

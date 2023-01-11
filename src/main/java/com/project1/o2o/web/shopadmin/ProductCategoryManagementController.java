@@ -40,4 +40,34 @@ public class ProductCategoryManagementController {
 			return new Result<List<ProductCategory>>(false, ps.getState(), ps.getStateInfo());
 		}
 	}
+	
+	@RequestMapping(value = "/addproductcategories", method = RequestMethod.POST)
+	@ResponseBody
+	private Map<String, Object> addProductCategories(@RequestBody List<ProductCategory> productCategoryList,
+			HttpServletRequest request) {
+		Map<String, Object> modelMap = new HashMap<String, Object>();
+		Shop currentShop = (Shop) request.getSession().getAttribute("currentShop");// productCategoryList requires shopId to locate productCategories
+		for (ProductCategory pc : productCategoryList) {
+			pc.setShopId(currentShop.getShopId());
+		}
+		if (productCategoryList != null && productCategoryList.size() > 0) {
+			try {
+				ProductCategoryExecution pe = productCategoryService.batchAddProductCategory(productCategoryList);
+				if (pe.getState() == ProductCategoryStateEnum.SUCCESS.getState()) {
+					modelMap.put("success", true);
+				} else {
+					modelMap.put("success", false);
+					modelMap.put("errMsg", pe.getStateInfo());
+				}
+			} catch (ProductCategoryOperationException e) {
+				modelMap.put("success", false);
+				modelMap.put("errMsg", e.toString());
+				return modelMap;
+			}
+		} else {
+			modelMap.put("success", false);
+			modelMap.put("errMsg", "Please enter at least one product category");
+		}
+		return modelMap;
+	}
 }

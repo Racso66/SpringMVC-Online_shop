@@ -18,4 +18,11 @@ public interface ProductCategoryDao {
 	 * @return
 	 */
 	int batchInsertProductCategory(List<ProductCategory> productCategoryList);
+	
+	/**
+	 * delete productCategory by specified shopId
+	 * @param productCategoryId, shopId
+	 * @return effectedNum
+	 */
+	int deleteProductCategory(@Param("productCategoryId") long productCategoryId, @Param("shopId") long shopId);
 }

@@ -2,17 +2,17 @@ $(function() {
 	var listUrl = '/o2o/shopadmin/getproductcategorylist';
 	var addUrl = '/o2o/shopadmin/addproductcategories';
 	var deleteUrl = '/o2o/shopadmin/removeproductcategory';
-	
+
 	getList();
-	function getList(){
-		$.getJSON(listUrl, function(data){
-			if(data.success){
+	function getList() {
+		$.getJSON(listUrl, function(data) {
+			if (data.success) {
 				var dataList = data.data;
 				$('.category-wrap').html('');
 				var tempHtml = '';
-				dataList.map(function(item, index){
+				dataList.map(function(item, index) {
 					tempHtml += ''
-						+ '<div class = "row row-product-category now">'
+						+ '<div class = "row row-product-category now">'// now tag means already exist
 						+ '<div class = "col-33 product-category-name">'
 						+ item.productCategoryName
 						+ '</div>'
@@ -28,4 +28,38 @@ $(function() {
 			}
 		});
 	}
+	$('#create').click(function() { //create button
+		var tempHtml = '<div class = "row row-product-category temp">'//temp tag means to be added upon submition
+			+ '<div class = "col-33"><input class = "category-input category" type = "text" placeholder = "Category Name"></div>'
+			+ '<div class = "col-33"><input class = "category-input priority" type = "number" placeholder = "Priority"></div>'
+			+ '<div class = "col-33"><a href = "#" class = "button delete">Delete</a></div>'
+			+ '</div>'
+		$('.category-wrap').append(tempHtml); //each click on create button will allow entries to be appened to .category-wrap
+	});
+	$('#submit').click(function() { //submit button
+		var tempArr = $('.temp'); //acquire new entries by searching for temp tag
+		var productCategoryList = [];
+		tempArr.map(function(index, item) {
+			var tempObj = {};
+			tempObj.productCategoryName = $(item).find('.category').val(); //finds from each item containing temp tag instead of the whole list
+			tempObj.priority = $(item).find('.priority').val();
+			if (tempObj.productCategoryName && tempObj.priority) {
+				productCategoryList.push(tempObj);//no need for shopId, already acquired from session in controller
+			}
+		});
+		$.ajax({
+			url: addUrl,
+			type: 'POST',
+			data: JSON.stringify(productCategoryList),
+			contentType: 'application/json',
+			success: function(data) {
+				if (data.success) {
+					$.toast('Submission success!');
+					getList();//call getList() function to immediatly update list and sort by priority upon succesful submit
+				} else {
+					$.toast('Submission failure!');
+				}
+			}
+		});
+	});
 });

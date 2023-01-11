@@ -10,4 +10,15 @@
 		Where shop_id = #{shopId}
 		Order by priority DESC
 	</select>
+	
+	<insert id="batchInsertProductCategory" parameterType = "java.util.List">
+		Insert into tb_product_category (product_category_name, priority, create_time, shop_id)
+		Values
+		<foreach collection = "list" item = "productCategory" index = "index" separator = ",">
+			(#{productCategory.productCategoryName},
+			#{productCategory.priority},
+			#{productCategory.createTime},
+			#{productCategory.shopId})
+		</foreach>
+	</insert>
 </mapper>

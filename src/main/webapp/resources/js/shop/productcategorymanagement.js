@@ -62,4 +62,28 @@ $(function() {
 			}
 		});
 	});
+	$('.category-wrap').on('click', '.row-product-category.temp .delete', function(e){//delete newly created product category before submission
+		console.log($(this).parent().parent());
+		$(this).parent().parent().remove();//access starting <div></div>
+	});
+	
+	$('.category-wrap').on('click', '.row-product-category.now .delete', function(e){//delete from categories that are already stored
+		var target = e.currentTarget;
+		$.confirm('Are you sure?', function(){
+			$.ajax({
+				url: deleteUrl,
+				type: 'POST',
+				data: {productCategoryId: target.dataset.id},
+				dataType: 'json',
+				success: function(data) {
+					if (data.success) {
+						$.toast('Deleted!');
+						getList();//call getList() function to immediatly update list and sort by priority upon succesful submit
+					} else {
+						$.toast('Deletion failed!');
+					}
+				}
+			});
+		});
+	});
 });

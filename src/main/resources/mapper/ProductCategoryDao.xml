@@ -21,4 +21,9 @@
 			#{productCategory.shopId})
 		</foreach>
 	</insert>
+	<delete id="deleteProductCategory">
+		Delete from tb_product_category
+		Where product_category_id = #{productCategoryId}
+		And shop_id = #{shopId} <!-- For security reason, user must provide shopId of the product category -->
+	</delete>
 </mapper>

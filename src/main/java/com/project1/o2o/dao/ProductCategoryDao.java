@@ -11,4 +11,11 @@ public interface ProductCategoryDao {
 	 * @return List<ProductCategory>
 	 */
 	List<ProductCategory> queryProductCategoryList(long shopId);
+		
+	/**
+	 * batch create product category
+	 * @param productCategoryList
+	 * @return
+	 */
+	int batchInsertProductCategory(List<ProductCategory> productCategoryList);
 }

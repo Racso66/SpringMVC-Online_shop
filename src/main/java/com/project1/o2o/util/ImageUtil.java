@@ -68,6 +68,25 @@ public class ImageUtil {
 		}
 		return relativeAddr; // use relative address for usability on different operating systems.
 	}
+	public static String generateNormalImg(ImageConstructor thumbnail, String targetAddr) {
+		String realFileName = getRandomFileName(); //random non-repeating name
+		String extension = getFileExtension(thumbnail.getImageName());
+		makeDirPath(targetAddr);
+		String relativeAddr = targetAddr + realFileName + extension;
+		logger.debug("current relativeAddr is:" + relativeAddr);
+		File dest = new File(PathUtil.getImgPath() + relativeAddr);
+		logger.debug("current complete address is:" + PathUtil.getImgPath() + relativeAddr);
+		try {
+			Thumbnails.of(thumbnail.getImage()).size(337, 640)
+			.watermark(Positions.BOTTOM_RIGHT,ImageIO.read(new File(path + "/watermark.jpg")),0.25f)
+			.outputQuality(0.9f)
+			.toFile(dest);
+		} catch(IOException e) {
+			logger.error(e.toString());
+			e.printStackTrace();
+		}
+		return relativeAddr; // use relative address for usability on different operating systems.
+	}
 	/**
 	 * create path for target directory. if path is /D:/path1/path2/path3/xxx.jpg, create path1 2 and 3.
 	 * @param targetAddr

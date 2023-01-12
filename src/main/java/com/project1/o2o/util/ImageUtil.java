@@ -2,7 +2,6 @@ package com.project1.o2o.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -12,6 +11,8 @@ import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
+import com.project1.o2o.dto.ImageConstructor;
 
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
@@ -48,16 +49,16 @@ public class ImageUtil {
 	 * @param targetAddr
 	 * @return
 	 */
-	public static String generateThumbnail(InputStream thumbnailInputStream, String fileName, String targetAddr) {
+	public static String generateThumbnail(ImageConstructor thumbnail, String targetAddr) {
 		String realFileName = getRandomFileName();
-		String extension = getFileExtension(fileName);
+		String extension = getFileExtension(thumbnail.getImageName());
 		makeDirPath(targetAddr);
 		String relativeAddr = targetAddr + realFileName + extension;
 		logger.debug("current relativeAddr is:" + relativeAddr);
 		File dest = new File(PathUtil.getImgPath() + relativeAddr);
 		logger.debug("current complete address is:" + PathUtil.getImgPath() + relativeAddr);
 		try {
-			Thumbnails.of(thumbnailInputStream).size(200, 200)
+			Thumbnails.of(thumbnail.getImage()).size(200, 200)
 			.watermark(Positions.BOTTOM_RIGHT,ImageIO.read(new File(path + "/watermark.jpg")),0.25f)
 			.outputQuality(0.8f)
 			.toFile(dest);
@@ -104,7 +105,7 @@ public class ImageUtil {
 		.outputQuality(0.8f)
 		.toFile("C:\\Users\\SAO\\Desktop\\Dinoland pics\\2new.jpg");
 	}
-	
+
 	/**
 	 * determine if path is file path or directory path,
 	 * if path is file path then delete the file,

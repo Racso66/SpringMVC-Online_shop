@@ -21,6 +21,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project1.o2o.dto.ImageConstructor;
 import com.project1.o2o.dto.ShopExecution;
 import com.project1.o2o.entity.Area;
 import com.project1.o2o.entity.Shop;
@@ -176,7 +177,8 @@ public class ShopManagementController {
 			shop.setOwner(owner);
 			ShopExecution se;
 			try {
-				se = shopService.addShop(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
+				ImageConstructor imageConstructor = new ImageConstructor(shopImg.getOriginalFilename(),shopImg.getInputStream());
+				se = shopService.addShop(shop, imageConstructor);
 				if(se.getState() == ShopStateEnum.CHECK.getState()) {
 					modelMap.put("success", true);
 					//List of shop that can be modified by this user
@@ -240,9 +242,11 @@ public class ShopManagementController {
 			ShopExecution se;
 			try {
 				if(shopImg == null) 
-					se = shopService.modifyShop(shop, null, null);
-				else
-					se = shopService.modifyShop(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
+					se = shopService.modifyShop(shop, null);
+				else {
+					ImageConstructor imageConstructor = new ImageConstructor(shopImg.getOriginalFilename(),shopImg.getInputStream());
+					se = shopService.modifyShop(shop, imageConstructor);
+				}
 				if(se.getState() == ShopStateEnum.SUCCESS.getState()) {
 					modelMap.put("success", true);
 				} else {

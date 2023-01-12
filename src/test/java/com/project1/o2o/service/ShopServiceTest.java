@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.project1.o2o.BaseTest;
+import com.project1.o2o.dto.ImageConstructor;
 import com.project1.o2o.dto.ShopExecution;
 import com.project1.o2o.entity.Area;
 import com.project1.o2o.entity.Shop;
@@ -44,7 +45,8 @@ public class ShopServiceTest extends BaseTest{
 		shop.setShopName("Name after modify");
 		File shopImg = new File("C:\\Users\\SAO\\Desktop\\Dinoland pics\\1.png");
 		InputStream is = new FileInputStream(shopImg);
-		ShopExecution shopExecution = shopService.modifyShop(shop, is, "1.png");
+		ImageConstructor imageConstructor = new ImageConstructor("1.png", is);
+		ShopExecution shopExecution = shopService.modifyShop(shop,imageConstructor);
 		System.out.println("new file path is:" + shopExecution.getShop().getShopImg());
 	}
 	@Test
@@ -69,7 +71,8 @@ public class ShopServiceTest extends BaseTest{
 		shop.setAdvice("Verifying");
 		File shopImg = new File("C:\\Users\\SAO\\Desktop\\Dinoland pics\\2.jpg");
 		InputStream is = new FileInputStream(shopImg);
-		ShopExecution se = shopService.addShop(shop, is, shopImg.getName());
+		ImageConstructor imageConstructor = new ImageConstructor("1.png", is);
+		ShopExecution se = shopService.addShop(shop, imageConstructor);
 		assertEquals(ShopStateEnum.CHECK.getState(), se.getState());
 	}
 

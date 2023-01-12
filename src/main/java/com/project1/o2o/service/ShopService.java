@@ -1,7 +1,6 @@
 package com.project1.o2o.service;
 
-import java.io.InputStream;
-
+import com.project1.o2o.dto.ImageConstructor;
 import com.project1.o2o.dto.ShopExecution;
 import com.project1.o2o.entity.Shop;
 import com.project1.o2o.exceptions.ShopOperationException;
@@ -34,7 +33,7 @@ public interface ShopService {
 	 * @return
 	 * @throws ShopOperationException
 	 */
-	ShopExecution modifyShop(Shop shop, InputStream shopImgInputStream, String fileName) throws ShopOperationException;
+	ShopExecution modifyShop(Shop shop, ImageConstructor thumbnail) throws ShopOperationException;
 	
 	/**
 	 * Register shop information, including image processing
@@ -45,5 +44,5 @@ public interface ShopService {
 	 * @return
 	 * @throws ShopOperationException
 	 */
-	ShopExecution addShop(Shop shop, InputStream shopImgInputStream, String fileName) throws ShopOperationException;
+	ShopExecution addShop(Shop shop, ImageConstructor thumbnail) throws ShopOperationException;
 }

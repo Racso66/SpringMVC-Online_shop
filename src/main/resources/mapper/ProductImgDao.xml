@@ -15,4 +15,10 @@
 		Delete from tb_product_img
 		Where product_id = #{productId}
 	</delete>
+	<select id="queryProductImgList" resultType="com.project1.o2o.entity.ProductImg">
+		Select product_img_id,img_addr,img_desc,priority,create_time,product_id
+		From tb_product_img
+		Where product_id = #{productId}
+		Order by product_img_id Asc
+	</select>
 </mapper>

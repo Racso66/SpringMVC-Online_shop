@@ -40,6 +40,13 @@ public class ProductImgDaoTest extends BaseTest {
 	}
 	
 	@Test
+	public void testBQueryProductImgList() {
+		// check productId 1 is it hold two images
+		List<ProductImg> productImgList = productImgDao.queryProductImgList(2L);
+		assertEquals(2, productImgList.size());
+	}
+	
+	@Test
 	public void testCDeleteProductImgByProductId() throws Exception {
 		long productId = 2;
 		int effectedNum = productImgDao.deleteProductImgByProductId(productId);

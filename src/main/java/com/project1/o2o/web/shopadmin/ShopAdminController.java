@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping(value = "shopadmin",method = {RequestMethod.GET})
-public class ShopaAdminController {
+@RequestMapping(value = "shopadmin", method = {RequestMethod.GET})
+public class ShopAdminController {
 	@RequestMapping(value = "/shopoperation") //view resolver set in spring-web.xml
 	public String shopOperation() {
 		return "shop/shopoperation";
@@ -25,5 +25,10 @@ public class ShopaAdminController {
 	@RequestMapping(value = "/productcategorymanagement", method = {RequestMethod.GET})
 	public String productCategoryManagement() {
 		return "shop/productcategorymanagement";
+	}
+	
+	@RequestMapping(value = "/productoperation")
+	public String productOperation() {
+		return "shop/productoperation";//return to add and modify product page
 	}
 }

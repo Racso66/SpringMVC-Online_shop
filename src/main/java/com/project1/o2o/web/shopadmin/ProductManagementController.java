@@ -40,7 +40,7 @@ public class ProductManagementController {
 	@ResponseBody
 	private Map<String, Object> addProduct(HttpServletRequest request){
 		Map<String, Object> modelMap = new HashMap<String, Object>();
-		//Kapcha Verification code
+		//Kaptcha Verification code
 		if(!CodeUtil.checkVerifyCode(request)) {
 			modelMap.put("success", false);
 			modelMap.put("errMsg", "Wrong code input");
@@ -94,9 +94,7 @@ public class ProductManagementController {
 			try {
 				//from session, receive current shop id and set it to product. (reduce dependency of front-end data)
 				Shop currentShop = (Shop)request.getSession().getAttribute("currentShop");
-				Shop shop = new Shop();
-				shop.setShopId(currentShop.getShopId());
-				product.setShop(shop);
+				product.setShop(currentShop);
 				//execute add product operation
 				ProductExecution pe = productService.addProduct(product, thumbnail, productImgList);
 				if(pe.getState() == ProductStateEnum.SUCCESS.getState()) {

@@ -11,4 +11,8 @@
 			#{productImg.createTime},#{productImg.productId})
 		</foreach>
 	</insert>
+	<delete id="deleteProductImgByProductId">
+		Delete from tb_product_img
+		Where product_id = #{productId}
+	</delete>
 </mapper>

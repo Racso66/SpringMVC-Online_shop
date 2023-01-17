@@ -18,4 +18,12 @@ public interface ProductImgDao {
 	 * @return
 	 */
 	int deleteProductImgByProductId(long productId);
+	
+	/**
+	 * 
+	 * 
+	 * @param productId
+	 * @return
+	 */
+	List<ProductImg> queryProductImgList(long productId);
 }

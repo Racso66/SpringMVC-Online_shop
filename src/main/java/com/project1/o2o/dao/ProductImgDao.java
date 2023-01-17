@@ -1,26 +1,21 @@
 package com.project1.o2o.dao;
 
-import com.project1.o2o.entity.Product;
+import java.util.List;
 
-public interface ProductDao {
+import com.project1.o2o.entity.ProductImg;
+
+public interface ProductImgDao {
 	/**
 	 * 
-	 * @param product
+	 * @param productImgList
 	 * @return
 	 */
-	int insertProduct(Product product);
+	int batchInsertProductImg(List<ProductImg> productImgList);
 	
 	/**
-	 * get product information by productId
+	 * delete all product specific images under the selected product
 	 * @param productId
 	 * @return
 	 */
-	Product queryByProductId(long productId);
-	
-	/**
-	 * update product info
-	 * @param product
-	 * @return
-	 */
-	int updateProduct(Product product);
+	int deleteProductImgByProductId(long productId);
 }

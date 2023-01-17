@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Product Operation</title>
+<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+
+<!-- Google Web Fonts -->
+
+<link rel="stylesheet" href="../resources/css/common/sm.min.css">
+<link rel="stylesheet" href="../resources/css/common/sm-extend.min.css">
+<link rel="stylesheet"
+	href="../resources/css/shop/productmanagement.css">
+</head>
+<body>
+	<header class = "bar bar-nav">
+		<h1 class = "title">Edit Product</h1>
+	</header>
+	<div class="content">
+		<div class="list-block">
+			<ul>
+				<li>
+					<div class = "item-content">
+						<div class = "item-media">
+							<i class = "icon icon-form-name"></i>
+						</div>
+						<div class = "item-inner">
+							<div class = "item-title label">Product name</div>
+							<div class = "item-input">
+								<input type="text" id="product-name" placeholder="Name of product">
+							</div>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class = "item-content">
+						<div class = "item-media">
+							<i class = "icon icon-form-email"></i>
+						</div>
+						<div class = "item-inner">
+							<div class = "item-title label">Product category</div>
+							<div class = "item-input">
+								<select id = "category"></select>
+							</div>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class = "item-content">
+						<div class = "item-media">
+							<i class = "icon icon-form-email"></i>
+						</div>
+						<div class = "item-inner">
+							<div class = "item-title label">Product priority</div>
+							<div class = "item-input">
+								<input type="number" id="priority" placeholder="Bigger number has greater priority">
+							</div>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class = "item-content">
+						<div class = "item-media">
+							<i class = "icon icon-form-email"></i>
+						</div>
+						<div class = "item-inner">
+							<div class = "item-title label">Normal price</div>
+							<div class = "item-input">
+								<input type="number" id="normal-price" placeholder="Optional">
+							</div>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class = "item-content">
+						<div class = "item-media">
+							<i class = "icon icon-form-email"></i>
+						</div>
+						<div class = "item-inner">
+							<div class = "item-title label">Current price</div>
+							<div class = "item-input">
+								<input type="number" id="sale-price" placeholder="Optional">
+							</div>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class = "item-content">
+						<div class = "item-media">
+							<i class = "icon icon-form-email"></i>
+						</div>
+						<div class = "item-inner">
+							<div class = "item-title label">Thumbnail</div>
+							<div class = "item-input">
+								<input type="file" id="thumbnail-img">
+							</div>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class = "item-content">
+						<div class = "item-media">
+							<i class = "icon icon-form-email"></i>
+						</div>
+						<div class = "item-inner detailed-img-div">
+							<div class = "item-title label">Detailed Image</div>
+							<div class = "item-input" id = "detailed-img">
+								<input type ="file" class = "detailed-img"> <!-- Up to 6 times -->
+							</div>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class = "item-content">
+						<div class = "item-media">
+							<i class = "icon icon-form-email"></i>
+						</div>
+						<div class = "item-inner">
+							<div class = "item-title label">Product description</div>
+							<div class = "item-input">
+								<textarea id="product-desc" placeholder="Describe the product"></textarea>
+							</div>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="item-content">
+						<div class = "item-media">
+							<i class = "icon icon-form-email"></i>
+						</div>
+						<div class="item-inner">
+							<label for = "j_kaptcha" class="item-title label">Verify Code</label>
+							<input type="text" id="j_kaptcha" name = "j_kaptcha" class = "form-control in"
+							placeholder="verify code" />
+							<div class="item-input">
+								<img id="kaptcha_img" alt="click to change" title="click to change" 
+								onclick="changeVerifyCode(this)" src="../Kaptcha" /> <!-- Kaptcha servlet from web.xml -->
+							</div>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="content-block">
+			<div class="row">
+				<div class="col-50">
+					<a href="/o2o/shopadmin/productmanagement" 
+						class="button button-big button-fill button-danger" 
+						id= "back">return to management</a>
+				</div>
+				<div class="col-50">
+					<a href="#" class="button button-big button-fill button-success"
+						id="submit">Submit</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<script type="text/javascript"
+		src="../resources/js/common/zepto.min.js" charset="utf-8"></script>
+	<script type="text/javascript" 
+		src="../resources/js/common/sm.min.js" charset="utf-8"></script>
+	<script type="text/javascript"
+		src="../resources/js/common/sm-extend.min.js" charset="utf-8"></script>
+	<script type="text/javascript"
+		src="../resources/js/common/common.js" charset="utf-8"></script>
+	<script type="text/javascript"
+		src='../resources/js/shop/productoperation.js' charset='utf-8'></script>
+</body>

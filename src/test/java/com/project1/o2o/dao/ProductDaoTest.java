@@ -2,7 +2,9 @@ package com.project1.o2o.dao;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.project1.o2o.BaseTest;
 import com.project1.o2o.entity.Product;
 import com.project1.o2o.entity.ProductCategory;
+import com.project1.o2o.entity.ProductImg;
 import com.project1.o2o.entity.Shop;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -64,6 +67,50 @@ public class ProductDaoTest extends BaseTest {
 		effectedNum = productDao.insertProduct(product2);
 		assertEquals(1, effectedNum);
 		effectedNum = productDao.insertProduct(product3);
+		assertEquals(1, effectedNum);
+	}
+	
+	@Test
+	public void testCQueryProductByProductId() throws Exception{
+		long productId = 2;
+		ProductImg productImg1 = new ProductImg();
+		productImg1.setImgAddr("Image 1");
+		productImg1.setImgDesc("Test product1");
+		productImg1.setPriority(1);
+		productImg1.setCreateTime(new Date());
+		productImg1.setProductId(productId);
+		ProductImg productImg2 = new ProductImg();
+		productImg2.setImgAddr("Image 2");
+		productImg2.setImgDesc("Test product2");
+		productImg2.setPriority(1);
+		productImg2.setCreateTime(new Date());
+		productImg2.setProductId(productId);
+		List<ProductImg> productImgList = new ArrayList<ProductImg>();
+		productImgList.add(productImg2);
+		productImgList.add(productImg1);
+		//add to list
+		int effectedNum = productImgDao.batchInsertProductImg(productImgList);
+		assertEquals(2, effectedNum);
+		//check size of list
+		Product product = productDao.queryByProductId(productId);
+		assertEquals(2, product.getProductImgList().size());
+		//delete from list
+		effectedNum = productImgDao.deleteProductImgByProductId(productId);
+		assertEquals(2, effectedNum);
+	}
+	
+	@Test
+	public void testDUpdateProduct() throws Exception{
+		Product product = new Product();
+		ProductCategory pc = new ProductCategory();
+		Shop shop = new Shop();
+		shop.setShopId(2L);
+		pc.setProductCategoryId(2L);
+		product.setProductId(2L);
+		product.setShop(shop);
+		product.setProductName("first product");
+		product.setProductCategory(pc);
+		int effectedNum = productDao.updateProduct(product);
 		assertEquals(1, effectedNum);
 	}
 }

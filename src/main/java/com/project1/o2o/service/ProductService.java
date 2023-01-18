@@ -18,5 +18,23 @@ public interface ProductService {
 	 * @throws ProductOperationException
 	 */
 	ProductExecution addProduct(Product product, ImageConstructor thumbnail, List<ImageConstructor> productImgList)
-			throws ProductOperationException;
+		throws ProductOperationException;
+	
+	/**
+	 * get seleced product info by product id
+	 * @param productId
+	 * @return
+	 */
+	Product getProductById(long productId);
+	
+	/**
+	 * modifies product info and image processing
+	 * @param product
+	 * @param thumbnail
+	 * @param productImgList
+	 * @return
+	 * @throws ProductOperationException
+	 */
+	ProductExecution modifyProduct(Product product, ImageConstructor thumbnail, List<ImageConstructor> productImgList)
+		throws ProductOperationException;
 }

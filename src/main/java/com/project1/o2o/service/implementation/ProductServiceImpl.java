@@ -35,7 +35,8 @@ public class ProductServiceImpl implements ProductService {
 	 */
 	@Override
 	@Transactional //ensure all 4 steps are executed, roll back if any step fails
-	public ProductExecution addProduct(Product product, ImageConstructor thumbnail, List<ImageConstructor> productImgCtorList) throws ProductOperationException {
+	public ProductExecution addProduct(Product product, ImageConstructor thumbnail, List<ImageConstructor> productImgCtorList)
+		throws ProductOperationException {
 		//first check for empty product
 		if(product != null && product.getShop() != null && product.getShop().getShopId() != null) {
 			//set default values for product
@@ -97,5 +98,60 @@ public class ProductServiceImpl implements ProductService {
 		String dest = PathUtil.getShopImagePath(product.getShop().getShopId());
 		String thumbnailAddr = ImageUtil.generateThumbnail(thumbnail, dest);
 		product.setImgAddr(thumbnailAddr);
+	}
+	
+	@Override
+	public Product getProductById(long productId) {
+		return productDao.queryByProductId(productId);
+	}
+	
+	/* Steps of modifyProduct
+	 * 1. If there is new thumbnail value, process thumbnail image and delete original thumbnail if there is one.
+	 * 2. If there are product specific image values, do the same as above for the List
+	 * 3. Clear all product specific images already existing under database table for product images
+	 * 4. Update database table for product
+	 */
+	@Override
+	@Transactional
+	public ProductExecution modifyProduct(Product product, ImageConstructor thumbnail, List<ImageConstructor> productImgCtorList) 
+		throws ProductOperationException {
+		//first check for empty product
+		if(product != null && product.getShop() != null && product.getShop().getShopId() != null) {
+			//set default values for product
+			product.setLastEdited(new Date());
+			// Step 1
+			if(thumbnail != null) {
+				Product tempProduct = productDao.queryByProductId(product.getProductId());//original info contains image path
+				if(tempProduct.getImgAddr() != null) ImageUtil.deleteFileOrPath(tempProduct.getImgAddr());//delete original
+				addThumbnail(product, thumbnail);
+			}
+
+			//Step 2,3
+			if(productImgCtorList != null && productImgCtorList.size() > 0) {
+				deleteProductImgList(product.getProductId());
+				addProductImgList(product, productImgCtorList);
+			}
+			try {
+				//update product info
+				int effectedNum = productDao.updateProduct(product); //Step 4
+				if(effectedNum <= 0) throw new ProductOperationException("Failed to update product information");
+				return new ProductExecution(ProductStateEnum.SUCCESS, product);
+			} catch (Exception e){
+				throw new ProductOperationException("Failed to update product information: " + e.toString());
+			}
+		} else { //empty product
+			return new ProductExecution(ProductStateEnum.EMPTY);
+		}
+	}
+
+	private void deleteProductImgList(long productId) {
+		//retrieve all original image by productId
+		List<ProductImg> productImgList = productImgDao.queryProductImgList(productId);
+		//clear all original images
+		for(ProductImg productImg : productImgList) {
+			ImageUtil.deleteFileOrPath(productImg.getImgAddr());
+		}
+		//delete from database
+		productImgDao.deleteProductImgByProductId(productId);
 	}
 }

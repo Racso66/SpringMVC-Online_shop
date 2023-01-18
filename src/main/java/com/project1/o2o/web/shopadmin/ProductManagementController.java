@@ -1,5 +1,6 @@
 package com.project1.o2o.web.shopadmin;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -20,9 +22,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project1.o2o.dto.ImageConstructor;
 import com.project1.o2o.dto.ProductExecution;
 import com.project1.o2o.entity.Product;
+import com.project1.o2o.entity.ProductCategory;
 import com.project1.o2o.entity.Shop;
 import com.project1.o2o.enums.ProductStateEnum;
 import com.project1.o2o.exceptions.ProductOperationException;
+import com.project1.o2o.service.ProductCategoryService;
 import com.project1.o2o.service.ProductService;
 import com.project1.o2o.util.CodeUtil;
 import com.project1.o2o.util.HttpServletRequestUtil;
@@ -32,6 +36,8 @@ import com.project1.o2o.util.HttpServletRequestUtil;
 public class ProductManagementController {
 	@Autowired
 	private ProductService productService;
+	@Autowired
+	private ProductCategoryService productCategoryService;
 	
 	//set maximum number of product specific images allowed to upload
 	private static final int IMAGEMAXCOUNT = 6;
@@ -50,7 +56,6 @@ public class ProductManagementController {
 		ObjectMapper mapper = new ObjectMapper();
 		Product product = null;
 		String productStr = HttpServletRequestUtil.getString(request, "productStr"); //receives JSON -> String from front-end
-		MultipartHttpServletRequest multipartRequest = null; //process file input stream
 		ImageConstructor thumbnail = null; //process thumbnail, store stream and name
 		List<ImageConstructor> productImgList = new ArrayList<ImageConstructor>(); //store input stream list and name list
 		//extracts file input stream from request session
@@ -58,19 +63,7 @@ public class ProductManagementController {
 		try {
 			//if request contains input stream, extract necessary files (product image and thumbnail)
 			if(multipartResolver.isMultipart(request)) { //exists necessary files
-				multipartRequest = (MultipartHttpServletRequest) request;
-				//Extract thumbnail and construct ImageConstructor target
-				CommonsMultipartFile thumbnailFile = (CommonsMultipartFile) multipartRequest.getFile("thumbnail"); //key = thumbnail
-				thumbnail = new ImageConstructor(thumbnailFile.getOriginalFilename(), thumbnailFile.getInputStream());
-				//Extract product image list and construct List<ImageConstructor> target, maximum 6 images allowed
-				for (int i = 0; i < IMAGEMAXCOUNT; i++) {
-					CommonsMultipartFile productImgFile = (CommonsMultipartFile) multipartRequest.getFile("productImg" + i);
-					if(productImgFile != null) { //if not null, then there is image to process. add it to List
-						ImageConstructor productImg = new ImageConstructor(productImgFile.getOriginalFilename(),
-								productImgFile.getInputStream());
-						productImgList.add(productImg);
-					} else break; //if i'th input stream is null, there are no more images uploaded
-				}
+				thumbnail = handleImage(request, thumbnail, productImgList);
 			} else { //error No images uploaded
 				modelMap.put("success", false);
 				modelMap.put("errMsg", "Upload at least 1 image");
@@ -111,6 +104,118 @@ public class ProductManagementController {
 		} else {//all 3 information are required
 			modelMap.put("success", false);
 			modelMap.put("errMsg", "Please enter required product information");
+		}
+		return modelMap;
+	}
+
+	private ImageConstructor handleImage(HttpServletRequest request, ImageConstructor thumbnail,
+			List<ImageConstructor> productImgList) throws IOException {
+		MultipartHttpServletRequest multipartRequest;
+		multipartRequest = (MultipartHttpServletRequest) request;
+		//Extract thumbnail and construct ImageConstructor target
+		CommonsMultipartFile thumbnailFile = (CommonsMultipartFile) multipartRequest.getFile("thumbnail"); //key = thumbnail
+		if(thumbnailFile != null) thumbnail = new ImageConstructor(thumbnailFile.getOriginalFilename(), thumbnailFile.getInputStream());
+		//Extract product image list and construct List<ImageConstructor> target, maximum 6 images allowed
+		for (int i = 0; i < IMAGEMAXCOUNT; i++) {
+			CommonsMultipartFile productImgFile = (CommonsMultipartFile) multipartRequest.getFile("productImg" + i);
+			if(productImgFile != null) { //if not null, then there is image to process. add it to List
+				ImageConstructor productImg = new ImageConstructor(productImgFile.getOriginalFilename(),
+						productImgFile.getInputStream());
+				productImgList.add(productImg);
+			} else break; //if i'th input stream is null, there are no more images uploaded
+		}
+		return thumbnail;
+	}
+	
+	/**
+	 * get product info by product id
+	 * @param productId
+	 * @return
+	 */
+	@RequestMapping(value = "/getproductbyid", method = RequestMethod.GET)
+	@ResponseBody
+	private Map<String, Object> getProductById(@RequestParam Long productId) {
+		Map<String, Object> modelMap = new HashMap<String, Object>();
+		// check empty input
+		if(productId >= 0) {
+			//retrieve product info
+			Product product = productService.getProductById(productId);
+			//retrieve product category list under the shop
+			List<ProductCategory> productCategoryList = productCategoryService.getProductCategoryList(product.getShop().getShopId());
+			modelMap.put("product", product);
+			modelMap.put("productCategoryList", productCategoryList);
+			modelMap.put("success", true);
+		} else {
+			modelMap.put("success", false);
+			modelMap.put("errMsg", "Enter productId");
+		}
+		return modelMap;
+	}
+	
+	/**
+	 * Modify product
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/modifyproduct", method = RequestMethod.POST)
+	@ResponseBody
+	private Map<String, Object> modifyProduct(HttpServletRequest request) {
+		Map<String, Object> modelMap = new HashMap<String, Object>();
+		//determine if modify is for managing products or changing validation of a product.
+		boolean statusChange = HttpServletRequestUtil.getBoolean(request, "statusChange");//managing product requires verify code on new page
+		if (!statusChange && !CodeUtil.checkVerifyCode(request)) {
+			modelMap.put("success", false);
+			modelMap.put("errMsg", "Wrong verify code entered");
+			return modelMap;
+		}
+		// receive starting values from front end
+		ObjectMapper mapper = new ObjectMapper();
+		Product product = null;
+		ImageConstructor thumbnail = null;
+		List<ImageConstructor> productImgList = new ArrayList<ImageConstructor>();
+		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+		//Extract files if there exists input stream
+		try {
+			if(multipartResolver.isMultipart(request)) {
+				thumbnail = handleImage(request, thumbnail, productImgList);
+			}
+		} catch (Exception e){
+			modelMap.put("success", false);
+			modelMap.put("errMsg", e.toString());
+			return modelMap;
+		}
+		//Receive form data String stream from front-end and change to product class
+		try {
+			String productStr = HttpServletRequestUtil.getString(request, "productStr");
+			product = mapper.readValue(productStr, Product.class);
+		} catch (Exception e) {
+			modelMap.put("success", false);
+			modelMap.put("errMsg", e.toString());
+			return modelMap;
+		}
+		//update product if not null
+		if(product != null) {
+			try {
+				Shop currentShop = (Shop) request.getSession().getAttribute("currentShop");
+				Shop shop = new Shop();
+				shop.setShopId(currentShop.getShopId());
+				product.setShop(shop);
+				//perform changing product information
+				ProductExecution pe = productService.modifyProduct(product, thumbnail, productImgList);
+				if(pe.getState() == ProductStateEnum.SUCCESS.getState()) {
+					modelMap.put("success", true);
+				} else {
+					modelMap.put("success", false);
+					modelMap.put("errMsg", pe.getStateInfo());
+				}
+			} catch (ProductOperationException e) {
+				modelMap.put("success", false);
+				modelMap.put("errMsg", e.toString());
+				return modelMap;
+			}
+		} else {
+			modelMap.put("success", false);
+			modelMap.put("errMsg", "Enter product information");
 		}
 		return modelMap;
 	}

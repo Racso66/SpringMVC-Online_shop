@@ -78,4 +78,46 @@
 		Where shop_id=#{shop.shopId}<!-- ensure the shop administrator cannot modify shops without permission -->
 		And product_id =#{productId}
 	</update>
+	
+	<!-- Product name(fuzzy), status, shopId, category -->
+	<select id="queryProductList" resultType="com.project1.o2o.entity.Product">
+		Select product_id, product_name, product_desc, img_addr,normal_price, sale_price, priority, create_time, 
+		last_edited, enable_status, product_category_id, shop_id
+		From tb_product
+		<where>
+			<if test="productCondition.productCategory != null and productCondition.productCategory.productCategoryId != null">
+				and product_category_id = #{productCondition.productCategory.productCategoryId}
+			</if>
+			<if test="productCondition.productName != null">
+				and product_name like '%${productCondition.productName}%'
+			</if>
+			<if test="productCondition.enableStatus != null">
+				and enable_status = #{productCondition.enableStatus}
+			</if>
+			<if test="productCondition.shop != null and productCondition.shop.shopId != null">
+				and shop_id = #{productCondition.shop.shopId}
+			</if>
+		</where>
+		Order by priority Desc
+		Limit #{rowIndex},#{pageSize};
+	</select>
+	
+	<select id= "queryProductCount" resultType="int">
+		Select count(1)
+		From tb_product
+		<where>
+			<if test="productCondition.productCategory != null and productCondition.productCategory.productCategoryId != null">
+				and product_category_id = #{productCondition.productCategory.productCategoryId}
+			</if>
+			<if test="productCondition.productName != null">
+				and product_name like '%${productCondition.productName}%'
+			</if>
+			<if test="productCondition.enableStatus != null">
+				and enable_status = #{productCondition.enableStatus}
+			</if>
+			<if test="productCondition.shop != null and productCondition.shop.shopId != null">
+				and shop_id = #{productCondition.shop.shopId}
+			</if>
+		</where>
+	</select>
 </mapper>

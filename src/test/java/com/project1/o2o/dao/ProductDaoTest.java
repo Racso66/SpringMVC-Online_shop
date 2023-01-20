@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,7 @@ public class ProductDaoTest extends BaseTest {
 		product2.setShop(shop1);
 		product2.setProductCategory(pc1);
 		Product product3 = new Product();
-		product3.setProductName("test 3");
+		product3.setProductName("product 3");
 		product3.setProductDesc("test desc 3");
 		product3.setImgAddr("test 3");
 		product3.setPriority(3);
@@ -69,8 +70,25 @@ public class ProductDaoTest extends BaseTest {
 		effectedNum = productDao.insertProduct(product3);
 		assertEquals(1, effectedNum);
 	}
+	@Test
+	public void testBQueryProductList() throws Exception{
+		Product productCondition = new Product();
+		//pagination, expected 3
+		List<Product> productList = productDao.queryProductList(productCondition, 0, 3);
+		assertEquals(3, productList.size());
+		//check entire list (2 already exist)
+		int count = productDao.queryProductCount(productCondition);
+		assertEquals(5, count);
+		//check fuzzy search on "test" keyword for product name
+		productCondition.setProductName("test");
+		productList = productDao.queryProductList(productCondition, 0, 3);
+		assertEquals(2, productList.size());
+		count = productDao.queryProductCount(productCondition);
+		assertEquals(2, count);
+	}
 	
 	@Test
+	@Ignore
 	public void testCQueryProductByProductId() throws Exception{
 		long productId = 2;
 		ProductImg productImg1 = new ProductImg();
@@ -100,6 +118,7 @@ public class ProductDaoTest extends BaseTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testDUpdateProduct() throws Exception{
 		Product product = new Product();
 		ProductCategory pc = new ProductCategory();

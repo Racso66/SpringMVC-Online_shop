@@ -18,6 +18,7 @@ import com.project1.o2o.enums.ProductStateEnum;
 import com.project1.o2o.exceptions.ProductOperationException;
 import com.project1.o2o.service.ProductService;
 import com.project1.o2o.util.ImageUtil;
+import com.project1.o2o.util.PageCalculator;
 import com.project1.o2o.util.PathUtil;
 
 @Service
@@ -153,5 +154,18 @@ public class ProductServiceImpl implements ProductService {
 		}
 		//delete from database
 		productImgDao.deleteProductImgByProductId(productId);
+	}
+	
+	@Override
+	public ProductExecution getProductList(Product productCondition, int pageIndex, int pageSize) {
+		//turn pageIndex to rowIndex used by database, and call Dao to extract product list of given pageIndex
+		int rowIndex = PageCalculator.calculateRowIndex(pageIndex, pageSize);
+		List<Product> productList = productDao.queryProductList(productCondition, rowIndex, pageSize);
+		//return total number of products found under the same conditions
+		int count = productDao.queryProductCount(productCondition);
+		ProductExecution pe = new ProductExecution();
+		pe.setProductList(productList);
+		pe.setCount(count);
+		return pe;
 	}
 }

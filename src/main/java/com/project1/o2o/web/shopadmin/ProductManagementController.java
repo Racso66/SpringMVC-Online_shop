@@ -219,4 +219,47 @@ public class ProductManagementController {
 		}
 		return modelMap;
 	}
+	
+	@RequestMapping(value = "/getproductlistbyshop", method = RequestMethod.GET)
+	@ResponseBody
+	private Map<String, Object> getProductListByShop(HttpServletRequest request) {
+		Map<String, Object> modelMap = new HashMap<String, Object>();
+		//store pageindex and pagesize from front-end
+		int pageIndex = HttpServletRequestUtil.getInt(request, "pageIndex");
+		int pageSize = HttpServletRequestUtil.getInt(request, "pageSize");
+		//shopId from current session
+		Shop currentShop = (Shop)request.getSession().getAttribute("currentShop");
+		if((pageIndex >= 0) && (pageSize >= 0) && (currentShop != null) && (currentShop.getShopId() != null)) {
+			//get required condition for input (which product category or product name is needed to select the list under a shop)
+			//selection condition can be arranged
+			long productCategoryId = HttpServletRequestUtil.getLong(request, "productCategoryId");
+			String productName = HttpServletRequestUtil.getString(request, "productName");
+			Product productCondition = packProductCondition(currentShop.getShopId(), productCategoryId, productName);
+			//import search condition and pagination info for searching and return the according product list and count
+			ProductExecution pe = productService.getProductList(productCondition, pageIndex, pageSize);
+			modelMap.put("productList", pe.getProductList());
+			modelMap.put("count", pe.getCount());
+			modelMap.put("success", true);
+		} else {
+			modelMap.put("success", false);
+			modelMap.put("errMsg", "Enter all values for pageSize, pageIndex and shopId");
+		}
+		return modelMap;
+	}
+
+	private Product packProductCondition(long shopId, long productCategoryId, String productName) {
+		Product productCondition = new Product();
+		Shop shop = new Shop();
+		shop.setShopId(shopId);
+		productCondition.setShop(shop);
+		//if there is specified category
+		if(productCategoryId != -1L) {
+			ProductCategory productCategory = new ProductCategory();
+			productCategory.setProductCategoryId(productCategoryId);
+			productCondition.setProductCategory(productCategory);
+		}
+		//if there is fuzzy search for product name
+		if(productName != null) productCondition.setProductName(productName);
+		return productCondition;
+	}
 }

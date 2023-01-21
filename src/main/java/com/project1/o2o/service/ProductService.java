@@ -37,4 +37,13 @@ public interface ProductService {
 	 */
 	ProductExecution modifyProduct(Product product, ImageConstructor thumbnail, List<ImageConstructor> productImgList)
 		throws ProductOperationException;
+	
+	/**
+	 * Search for product list and perform pagination. (through product name[fuzzy], product state, shop id, product category
+	 * @param productCondition
+	 * @param pageIndex
+	 * @param pageSize
+	 * @return
+	 */
+	ProductExecution getProductList(Product productCondition, int pageIndex, int pageSize);
 }

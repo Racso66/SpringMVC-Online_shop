@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "shopadmin", method = {RequestMethod.GET})
-public class ShopAdminController {
+public class ShopaAdminController {
 	@RequestMapping(value = "/shopoperation") //view resolver set in spring-web.xml
 	public String shopOperation() {
 		return "shop/shopoperation";
@@ -22,7 +22,7 @@ public class ShopAdminController {
 		return "shop/shopmanagement";
 	}
 	
-	@RequestMapping(value = "/productcategorymanagement", method = {RequestMethod.GET})
+	@RequestMapping(value = "/productcategorymanagement", method = RequestMethod.GET)
 	public String productCategoryManagement() {
 		return "shop/productcategorymanagement";
 	}
@@ -30,5 +30,10 @@ public class ShopAdminController {
 	@RequestMapping(value = "/productoperation")
 	public String productOperation() {
 		return "shop/productoperation";//return to add and modify product page
+	}
+	
+	@RequestMapping(value = "/productmanagement")
+	public String productManagement() {
+		return "shop/productmanagement";
 	}
 }

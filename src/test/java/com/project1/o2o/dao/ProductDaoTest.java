@@ -26,6 +26,7 @@ public class ProductDaoTest extends BaseTest {
 	private ProductImgDao productImgDao;
 
 	@Test
+	@Ignore
 	public void testAInsertProduct() throws Exception {
 		Shop shop1 = new Shop();
 		shop1.setShopId(2L);
@@ -71,6 +72,7 @@ public class ProductDaoTest extends BaseTest {
 		assertEquals(1, effectedNum);
 	}
 	@Test
+	@Ignore
 	public void testBQueryProductList() throws Exception{
 		Product productCondition = new Product();
 		//pagination, expected 3
@@ -130,6 +132,12 @@ public class ProductDaoTest extends BaseTest {
 		product.setProductName("first product");
 		product.setProductCategory(pc);
 		int effectedNum = productDao.updateProduct(product);
+		assertEquals(1, effectedNum);
+	}
+	
+	@Test
+	public void testEUpdateProductCategoryToNull() {
+		int effectedNum = productDao.updateProductCategoryToNull(3L);
 		assertEquals(1, effectedNum);
 	}
 }

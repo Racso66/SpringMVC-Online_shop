@@ -46,4 +46,11 @@ public interface ProductDao {
 	 * @return
 	 */
 	int queryProductCount(@Param("productCondition") Product productCondition);
+	
+	/**
+	 * Before deleting product, set its category id to null
+	 * @param productCategoryId
+	 * @return
+	 */
+	int updateProductCategoryToNull(long productCategoryId);
 }

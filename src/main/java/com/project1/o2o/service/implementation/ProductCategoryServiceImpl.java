@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.project1.o2o.dao.ProductCategoryDao;
+import com.project1.o2o.dao.ProductDao;
 import com.project1.o2o.dto.ProductCategoryExecution;
 import com.project1.o2o.entity.ProductCategory;
 import com.project1.o2o.enums.ProductCategoryStateEnum;
@@ -16,6 +18,8 @@ import com.project1.o2o.service.ProductCategoryService;
 public class ProductCategoryServiceImpl implements ProductCategoryService{
 	@Autowired
 	private ProductCategoryDao productCategoryDao;
+	@Autowired
+	private ProductDao productDao;
 	
 	@Override
 	public List<ProductCategory>getProductCategoryList(long shopId) {
@@ -42,10 +46,17 @@ public class ProductCategoryServiceImpl implements ProductCategoryService{
 	@Transactional //wait until second step success before executing. Ensures both process submitted successfully
 	public ProductCategoryExecution deleteProductCategory(long productCategoryId, long shopId)
 			throws ProductCategoryOperationException{
-		//TODO reset the product category id of the products under the category
+		//Step 1 reset the product category id of the products under the category in tb_category
+		try {
+			int effectedNum = productDao.updateProductCategoryToNull(productCategoryId);
+			if(effectedNum < 0) throw new ProductCategoryOperationException("Failed to update product category");
+		} catch (Exception e) {
+			throw new ProductCategoryOperationException("deleteProductCategory error: " + e.getMessage());
+		}
+		//Step 2 delete the productCategory
 		try {
 			int effectedNum = productCategoryDao.deleteProductCategory(productCategoryId, shopId);
-			if(effectedNum <= 0) throw new ProductCategoryOperationException("failed to delete product category");
+			if(effectedNum <= 0) throw new ProductCategoryOperationException("Failed to delete product category");
 			else return new ProductCategoryExecution(ProductCategoryStateEnum.SUCCESS);
 		} catch(Exception e) {
 			throw new ProductCategoryOperationException("deleteProductCategory error: " + e.getMessage());

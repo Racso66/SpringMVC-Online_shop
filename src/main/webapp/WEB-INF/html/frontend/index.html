@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset = "utf-8">
+<meta http-equiv = "X-UA-Compatible" content = "IE=edge">
+<title>App Front Page</title>
+<meta name = "viewport" content = "initial-scale=1, maximum-scale=1">
+<link rel = "shortcut icon" href = "/favicon.ico">
+<meta name = "apple-mobile-web-app-capable" content = "yes">
+<meta name = "apple-mobile-web-app-status-bar-style" content= "black">
+<link rel="stylesheet" 
+	href="../resources/css/common/sm.min.css">
+<link rel="stylesheet" 
+	href="../resources/css/common/sm-extend.min.css">
+<link rel="stylesheet" 
+	href="../resources/css/frontend/index.css">
+</head>
+<body>
+	<div class = "page-group">
+		<div class = "page">
+			<header class = "bar bar-nav">
+				<h1 class = "title">SpringMVC Shop</h1>
+			</header>
+			<!-- Operational buttons -->
+			<nav class = "bar bar-tab">
+				<a class = "tab-item active" href = "#">
+					<span class = "icon icon-home"></span>
+					<span class = "tab-label">Front page</span>
+				</a>
+				<a class = "tab-item" href = "#" id ="me">
+					<span class = "icon icon-me"></span>
+					<span class = "tab-label">Me</span>
+				</a>
+			</nav>
+			<div class = "content">
+				<!-- Showcase images area -->
+				<div class = "swiper-container index-banner" data-space-between = "10">
+					<div class = "swiper-wrapper">
+						<!-- Items to be showcased written in js
+						<div class = "swiper-slide img-wrap">
+							<img class = "banner-img" src = #{imgAddr}
+						</div>
+						repeat X times for X number of images 
+						 -->
+					</div>
+					<div class = "swiper-pagination"></div>
+				</div>
+				<!-- Tag indicating lookup for all shops, shops listed in piority order -->
+				<div class = "all-shop-button">
+					<a href = "/o2o/frontend/shoplist" external>All shops</a>
+				</div>
+				<!-- First level category showcase area -->
+				<div class = "row">
+					<!-- every thing here is a click event, all first level categories may have children
+					<div class = "col-50 shop-classify>
+						<div class = "shops">
+							<p class = "shop-title">title</p>
+							<p class = "shop-desc">description</p>
+						</div>
+						<div class = "shop-classify-img-wrap">
+							<img class = "shop-img" src = #{imgAddr}>
+						</div>
+					</div>
+					 -->
+				</div>
+			</div>
+		</div>
+		<!-- Side pop-up panel -->
+		<div class = "panel-overlay"></div>
+		<div class = "panel panel-right panel-reveal" id = "panel-right-demo">
+			<div class = "content-block">
+			<!-- point system will be added later -->
+				<p>
+					<a href = "/o2o/frontend/myrecord" class = "close-panel">Purchase record</a>
+				</p><!-- href links with class "close-panel" results in hiding the pop-up panel after click event -->
+				<p>
+					<a href = "/o2o/frontend/mypoint" class = "close-panel">My points</a>
+				</p>
+				<p>
+					<a href = "/o2o/frontend/pointrecord" class = "close-panel">Point record</a>
+				</p>
+			</div>
+		</div>
+	</div>
+	
+	<script type="text/javascript"
+		src="../resources/js/common/zepto.min.js" charset="utf-8"></script>
+	<script type="text/javascript" 
+		src="../resources/js/common/sm.min.js" charset="utf-8"></script>
+	<script type="text/javascript"
+		src="../resources/js/common/sm-extend.min.js" charset="utf-8"></script>
+	<script type="text/javascript"
+		src='../resources/js/frontend/index.js' charset='utf-8'></script>
+</body>
+</html>

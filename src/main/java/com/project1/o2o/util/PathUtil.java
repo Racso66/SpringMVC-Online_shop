@@ -6,24 +6,24 @@ public class PathUtil {
 		String os = System.getProperty("os.name");
 		String path ="";
 		if(os.toLowerCase().startsWith("win")) {
-			path = "C:/Users/SAO/Desktop/Dinoland pics/";
+			path = "C:/Users/SAO/Desktop/Dinoland pics";
 		}else {
-			path = "/home/image/";
+			path = "/home/image";
 		}
 		path = path.replace("/", separator);
 		return path;
 	}
 	public static String getShopImagePath(long shopId) {
-		String imagePath = "upload/item/shop/" + shopId + "/";
+		String imagePath = "/upload/item/shop/" + shopId + "/";
 		return imagePath.replace("/", separator);
 	}
 	
 	public static String getHeadLineImagePath() {
-		String imagePath = "upload/images/item/headtitle/";
+		String imagePath = "/upload/item/headtitle/";
 		return imagePath.replace("/", separator);
 	}
 	public static String getShopCategoryPath() {
-		String imagePath = "upload/images/item/shopcategory/";
+		String imagePath = "/upload/item/shopcategory/";
 		return imagePath.replace("/", separator);
 	}
 }

@@ -36,6 +36,11 @@
 			<if test="shopCondition.shopCategory != null and shopCondition.shopCategory.shopCategoryId != null">
 				and s.shop_category_id = #{shopCondition.shopCategory.shopCategoryId}
 			</if>
+			<if test="shopCondition.shopCategory != null and shopCondition.shopCategory.parent != null and 
+			shopCondition.shopCategory.parent.shopCategoryId != null">
+				and s.shop_category_id In (Select shop_category_id From tb_shop_category Where parent_id = 
+				#{shopCondition.shopCategory.parent.shopCategoryId})
+			</if>
 			<if test="shopCondition.area != null and shopCondition.area.areaId != null">
 				and s.area_id = #{shopCondition.area.areaId}
 			</if>
@@ -60,6 +65,11 @@
 		<where>
 			<if test="shopCondition.shopCategory != null and shopCondition.shopCategory.shopCategoryId != null">
 				and s.shop_category_id = #{shopCondition.shopCategory.shopCategoryId}
+			</if>
+			<if test="shopCondition.shopCategory != null and shopCondition.shopCategory.parent != null and 
+			shopCondition.shopCategory.parent.shopCategoryId != null">
+				and s.shop_category_id In (Select shop_category_id From tb_shop_category Where parent_id = 
+				#{shopCondition.shopCategory.parent.shopCategoryId})
 			</if>
 			<if test="shopCondition.area != null and shopCondition.area.areaId != null">
 				and s.area_id = #{shopCondition.area.areaId}

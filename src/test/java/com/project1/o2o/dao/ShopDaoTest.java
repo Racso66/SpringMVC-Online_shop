@@ -22,20 +22,22 @@ public class ShopDaoTest extends BaseTest{
 	@Test
 	public void testQueryShopListAndCount() {
 		Shop shopCondition = new Shop();
-		UserInfo owner = new UserInfo();
-		owner.setUserId(1L);
-		shopCondition.setOwner(owner);
-		List<Shop> shopList = shopDao.queryShopList(shopCondition, 0, 3);
+		ShopCategory childCategory = new ShopCategory();
+		ShopCategory parentCategory = new ShopCategory();
+		parentCategory.setShopCategoryId(8L);//first level category Restaurant id = 8
+		childCategory.setParent(parentCategory);
+		shopCondition.setShopCategory(childCategory);
+		List<Shop> shopList = shopDao.queryShopList(shopCondition, 0, 5);
 		int count = shopDao.queryShopCount(shopCondition);
-		System.out.println("shopList size: " + shopList.size()); //expected 5
+		System.out.println("shopList size: " + shopList.size()); //expected 3 child categories in restaurant
 		System.out.println("Total shopList size: " + count);
-		ShopCategory sc = new ShopCategory();
+		/*ShopCategory sc = new ShopCategory();
 		sc.setShopCategoryId(1L);
 		shopCondition.setShopCategory(sc);
 		shopList = shopDao.queryShopList(shopCondition, 0, 2);
 		System.out.println("new shopList size: " + shopList.size());
 		count = shopDao.queryShopCount(shopCondition);
-		System.out.println("new total shopList size: " + count); //expected 4
+		System.out.println("new total shopList size: " + count); //expected 4*/
 	}
 	
 	@Test

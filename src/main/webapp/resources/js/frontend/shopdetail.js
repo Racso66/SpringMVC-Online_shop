@@ -73,9 +73,11 @@ $(function(){
 				var total = $('.list-div .card').length;
 				//if cards reach maximum, stop infinite-scroll
 				if(total >= maxItems) {
-					$.detachInfiniteScroll($('.infinite-scroll'));
-					//delete preloader
-					$('.infinite-scroll-preloader').remove();
+					//hide preloader
+					$('.infinite-scroll-preloader').hide();
+				} else {
+					//in cases where search condition changed, loader is still useable
+					$('.infinite-scroll-preloader').show();
 				}
 				//if not, page number ++, load new shops
 				pageNum += 1;
@@ -120,7 +122,7 @@ $(function(){
 	});
 	
 	//when product name condition changes, reset page number, clear shoplist
-	$('#search').on('input', function(e){
+	$('#search').on('change', function(e){
 		productName = e.target.value;
 		$('.list-div').empty();
 		pageNum = 1;

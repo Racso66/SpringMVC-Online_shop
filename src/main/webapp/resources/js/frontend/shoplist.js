@@ -69,9 +69,9 @@ $(function(){
 							+ '<div class="item-subtitle">' + item.shopDesc
 							+ '</div>' + '</div>' + '</li>' + '</ul>'
 							+ '</div>' + '</div>' + '<div class="card-footer">'
-							+ '<p class="color-gray">'
+							+ '<p class="color-gray">Updated on '
 							+ new Date(item.lastEdited).Format("yyyy-MM-dd")
-							+ 'Updated on</p>' + '<span>click for more</span>' 
+							+ '</p>' + '<span>click for more</span>' 
 							+ '</div>' + '</div>';
 				});
 				$('.list-div').append(html);
@@ -79,9 +79,11 @@ $(function(){
 				var total = $('.list-div .card').length;
 				//if cards reach maximum, stop infinite-scroll
 				if(total >= maxItems) {
-					$.detachInfiniteScroll($('.infinite-scroll'));
-					//delete preloader
-					$('.infinite-scroll-preloader').remove();
+					//hide preloader
+					$('.infinite-scroll-preloader').hide();
+				} else {
+					//in cases where search condition changed, loader is still useable
+					$('.infinite-scroll-preloader').show();
 				}
 				//if not, page number ++, load new shops
 				pageNum += 1;
@@ -137,7 +139,7 @@ $(function(){
 		}
 	});
 	//when shop name condition changes, reset page number, clear shoplist
-	$('#search').on('input', function(e){
+	$('#search').on('change', function(e){
 		shopName = e.target.value;
 		$('.list-div').empty();
 		pageNum = 1;

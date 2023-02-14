@@ -13,8 +13,15 @@ configure connection between jdbc and mybatis
     http://www.springframework.org/schema/context/spring-context.xsd">
     <!-- mybatis setup -->
  	<!-- 1)jdbc external connection properties: ${url} classpath= src/main/resources -->
-    <context:property-placeholder location="classpath:jdbc.properties"/>
-    
+    <!-- <context:property-placeholder location="classpath:jdbc.properties"/>  -->
+    <bean class = "com.project1.o2o.util.EncryptPropertyPlaceHolderConfigurer">
+    	<property name="locations">
+    		<list>
+    			<value>classpath:jdbc.properties</value>
+    		</list>
+    	</property>
+    	<property name="fileEncoding" value="UTF-8" />
+    </bean>
     <!-- 2)idbc connection pool -->
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
     	<!-- setup connection pool properties -->

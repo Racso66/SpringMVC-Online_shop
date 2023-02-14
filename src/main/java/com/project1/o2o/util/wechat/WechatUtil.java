@@ -4,9 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.ConnectException;
 import java.net.URL;
-import java.io.OutputStream;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project1.o2o.dto.UserAccessToken;
 import com.project1.o2o.dto.WechatUser;
+import com.project1.o2o.entity.UserInfo;
 
 public class WechatUtil {
 	private static Logger log = LoggerFactory.getLogger(WechatUtil.class);
@@ -135,5 +136,19 @@ public class WechatUtil {
 			return null;
 		}
 		return user;
+	}
+	/**
+	 * Convert information from WechatUser to UserInfo and return as UserInfo class
+	 *
+	 * @param user
+	 * @return
+	 */
+	public static UserInfo getUserInfoFromRequest(WechatUser user) {
+		UserInfo userInfo = new UserInfo();
+		userInfo.setName(user.getNickName());
+		userInfo.setGender(user.getSex() + "");
+		userInfo.setThumbnail(user.getHeadimgurl());
+		userInfo.setEnableStatus(1);
+		return userInfo;
 	}
 }

@@ -161,6 +161,12 @@ Set all the packages needed for this project
 	    <artifactId>commons-fileupload</artifactId>
 	    <version>1.4</version>
 	</dependency>
+	<!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
+	<dependency>
+	    <groupId>redis.clients</groupId>
+	    <artifactId>jedis</artifactId>
+	    <version>4.3.1</version>
+	</dependency>
 
 
   </dependencies>

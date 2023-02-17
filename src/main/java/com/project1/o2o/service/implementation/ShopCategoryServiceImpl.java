@@ -1,12 +1,20 @@
 package com.project1.o2o.service.implementation;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project1.o2o.cache.JedisUtil;
 import com.project1.o2o.dao.ShopCategoryDao;
 import com.project1.o2o.dto.ImageConstructor;
 import com.project1.o2o.dto.ShopCategoryExecution;
@@ -21,10 +29,56 @@ import com.project1.o2o.util.PathUtil;
 public class ShopCategoryServiceImpl implements ShopCategoryService{
 	@Autowired
 	private ShopCategoryDao shopCategoryDao;
+	@Autowired
+	private JedisUtil.Keys jedisKeys;
+	@Autowired
+	private JedisUtil.Strings jedisStrings;
+	
+	private static Logger logger = LoggerFactory.getLogger(ShopCategoryService.class);
 
 	@Override
 	public List<ShopCategory> getShopCategoryList(ShopCategory shopCategoryCondition) {
-		return shopCategoryDao.queryShopCategory(shopCategoryCondition);
+		String key = SCLISTKEY;
+		List<ShopCategory> shopCategoryList = null;
+		ObjectMapper mapper = new ObjectMapper();
+		// concat key for redis
+		if(shopCategoryCondition == null)
+			key = key + "_allfirstleve"; //parent Id == null if search condition is empty
+		else if(shopCategoryCondition != null && shopCategoryCondition.getParent() != null &&
+					shopCategoryCondition.getParent().getShopCategoryId() != null)
+			key = key + "_parent" + shopCategoryCondition.getParent().getShopCategoryId();
+		else if(shopCategoryCondition != null)
+			key = key + "_allsecondlevel";//list all child categories, no matter the parent
+		
+		if(!jedisKeys.exists(key)) {
+			// get info from db
+			shopCategoryList = shopCategoryDao.queryShopCategory(shopCategoryCondition);
+			// store info into String format
+			String jsonString;
+			try {
+				jsonString = mapper.writeValueAsString(shopCategoryList);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+				logger.error(e.getMessage());
+				throw new ShopCategoryOperationException(e.getMessage());
+			}
+			jedisStrings.set(key, jsonString);
+		} else {
+			String jsonString = jedisStrings.get(key);
+			JavaType javaType = mapper.getTypeFactory().constructParametricType(ArrayList.class, ShopCategory.class);
+			try {
+				shopCategoryList = mapper.readValue(jsonString, javaType);
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+				logger.error(e.getMessage());
+				throw new ShopCategoryOperationException(e.getMessage());
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+				logger.error(e.getMessage());
+				throw new ShopCategoryOperationException(e.getMessage());
+			}
+		}
+		return shopCategoryList;
 	}
 	
 	@Override

@@ -6,6 +6,8 @@ import java.util.List;
 import com.project1.o2o.entity.HeadLine;
 
 public interface HeadLineService {
+	public static final String HLLISTKEY = "headlinelist";
+	
 	/**
 	 * Return head line list according to search conditions
 	 * 

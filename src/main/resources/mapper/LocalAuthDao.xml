@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project1.o2o.dao.LocalAuthDao">
+	<resultMap id="localAuthResultMap" type="com.project1.o2o.entity.LocalAuth">
+		<id column="local_auth_id" property="localAuthId" />
+		<result column ="username" property="username" />
+		<result column ="password" property="password" />
+		<result column ="create_time" property="createTime" />
+		<result column ="last_edited" property="lastEdited" />
+		<association column ="userId" property="userInfo" javaType="com.project1.o2o.entity.UserInfo">
+			<id column="user_id" property="userId" />
+			<result column="user_name" property="userName" />
+			<result column="thumbnail" property="thumbnail" />
+			<result column="email" property="email" />
+			<result column="gender" property="gender" />
+			<result column="enable_status" property="enableStatus" />
+			<result column="user_type" property="userType" />
+			<result column="create_time" property="createTime" />
+			<result column="last_edited" property="lastEdited" />
+		</association>
+	</resultMap>
+	
+	<select id="queryLocalByUserNameAndPwd" resultMap="localAuthResultMap" 
+		parameterType="String">
+		Select la.local_auth_id, la.username, la.password, la.create_time,
+		la.last_edited, ui.user_id, ui.user_name, ui.thumbnail, ui.email,
+		ui.gender, ui.enable_status, ui.user_type, ui.create_time,
+		ui.last_edited
+		From tb_local_auth la Left join tb_user_info ui On la.user_id = ui.user_id
+		Where la.username = #{username} And la.password = #{password}
+	</select>
+	
+	<select id="queryLocalByUserId" resultMap="localAuthResultMap"
+		parameterType="long">
+		Select la.local_auth_id, la.username, la.password, la.create_time,
+		la.last_edited, ui.user_id, ui.user_name, ui.thumbnail, ui.email,
+		ui.gender, ui.enable_status, ui.user_type, ui.create_time,
+		ui.last_edited
+		From tb_local_auth la Left join tb_user_info ui On la.user_id = ui.user_id
+		Where la.user_id = #{userId}
+	</select>
+	
+	<insert id="insertLocalAuth" parameterType="com.project1.o2o.entity.LocalAuth"
+		useGeneratedKeys="true" keyProperty="localAuthId" keyColumn="local_auth_id">
+		Insert into tb_local_auth(username, password, user_id, create_time, last_edited)
+		Values(#{username}, #{password}, #{userInfo.userId}, #{createTime}, #{lastEdited})
+	</insert>
+	
+	<update id="updateLocalAuth">
+		update tb_local_auth
+		<set>
+			<if test="newPassword != null">password=#{newPassword},</if>
+			<if test="lastEdited != null">last_edited=#{lastEdited}</if>
+		</set>
+		Where user_id=#{userId}
+		And username=#{username}
+		And password=#{password}
+	</update>
+</mapper>

@@ -49,6 +49,10 @@ $(function(){
 	});
 	
 	$('#back').click(function(){
-		window.location.href = '/o2o/shopadmin/shoplist';
+		if(usertype == 1){
+			window.location.href = '/o2o/frontend/index';
+		} else {
+			window.location.href = '/o2o/shopadmin/shoplist';
+		}
 	});
 });

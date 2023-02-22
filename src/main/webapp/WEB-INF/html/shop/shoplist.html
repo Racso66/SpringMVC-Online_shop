@@ -38,12 +38,16 @@
 		</div>
 		<div class = "content-block">
 			<div class = "row">
-				<div class = "col-50">
-					<a href = "#" id = "log-out"
+				<div class = "col-33">
+					<a href = "/o2o/local/accountbind?usertype=2"
+						class = "button button-big button-fill button-success">Bind account</a>
+				</div>
+				<div class = "col-33">
+					<a href = "#" id = "log-out" usertype = "2"
 						class = "button button-big button-fill button-danger">Exit system</a>
 				</div>
-				<div class = "col-50">
-					<a href = "/o2o/shop/changepwd" id = "bindOrChange"
+				<div class = "col-33">
+					<a href = "/o2o/local/changepwd?usertype=2" id = "bindOrChange"
 						class = "button button-big button-fill button-success">Change password</a>
 				</div>
 			</div>
@@ -58,5 +62,8 @@
 		src="../resources/js/common/sm-extend.min.js" charset="utf-8"></script>
 	<script type="text/javascript" 
 		src="../resources/js/shop/shoplist.js" charset="utf-8"></script>
+	<script type="text/javascript" 
+		src="../resources/js/local/logout.js" charset="utf-8"></script>
+	
 </body>
 </html>

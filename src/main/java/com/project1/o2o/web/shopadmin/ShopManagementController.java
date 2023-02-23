@@ -78,16 +78,19 @@ public class ShopManagementController {
 	@ResponseBody
 	private Map<String, Object> getShopList(HttpServletRequest request){
 		Map<String, Object> modelMap = new HashMap<String, Object>();
-		UserInfo user = new UserInfo();
-		user.setUserId(1L);
-		user.setName("Test name");
-		request.getSession().setAttribute("user", user);
-		user = (UserInfo) request.getSession().getAttribute("user");
+		// Test code
+//		UserInfo user = new UserInfo();
+//		user.setUserId(1L);
+//		user.setName("Test name");
+//		request.getSession().setAttribute("user", user);
+		UserInfo user = (UserInfo) request.getSession().getAttribute("user");
 		try {
 			Shop shopCondition = new Shop();
 			shopCondition.setOwner(user);
 			ShopExecution se = shopService.getShopList(shopCondition, 0, 100); //Assume owners has max 100 shops
 			modelMap.put("shopList", se.getShopList());
+			// get shop list and store as key as permission. all accounts can only operate their own store
+			request.getSession().setAttribute("shopList", se.getShopList()); 
 			modelMap.put("user", user); //show user name in front end
 			modelMap.put("success", true);
 		} catch(Exception e) {

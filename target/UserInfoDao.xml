@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project1.o2o.dao.UserInfoDao">
+	<select id = "queryUserInfoById" resultType="com.project1.o2o.entity.UserInfo" parameterType = "Long">
+		Select user_id, user_name, thumbnail, email, gender, enable_status, user_type, create_time,
+		last_edited
+		From tb_user_info
+		Where user_id = #{userId}
+	</select>
+	<insert id="insertUserInfo" parameterType="com.project1.o2o.entity.UserInfo" useGeneratedKeys="true"
+		keyProperty="userId" keyColumn="user_id">
+		Insert Into tb_user_info(user_name, thumbnail, email, gender, enable_status, user_type, create_time,
+		last_edited)
+		Values(#{userName}, #{thumbnail}, #{email}, #{gender}, #{enableStatus}, #{userType}, #{createTime},
+		#{lastEdited})
+	</insert>
+</mapper>

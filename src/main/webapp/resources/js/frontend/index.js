@@ -11,6 +11,7 @@ $(function(){
 						+ item.lineLink + '" external><img class="banner-img" src="'
 						+ item.lineImg + '" alt="' + item.lineName + '"></a>'
 						+ '</div>';
+						console.log(item)
 			});
 			//apply slide show to front-end html control
 			$('.swiper-wrapper').html(swiperHtml);

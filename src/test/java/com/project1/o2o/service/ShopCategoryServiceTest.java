@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Date;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,13 +27,29 @@ public class ShopCategoryServiceTest extends BaseTest {
 	public void testAAddShopCategory() throws ShopCategoryOperationException, FileNotFoundException{
 		ShopCategory shopCategory = new ShopCategory();
 		shopCategory.setCreateTime(new Date());
-		shopCategory.setPriority(8);
-		shopCategory.setShopCategoryName("Education");
-		shopCategory.setShopCategoryDesc("Education");
-		File thumbnailFile = new File("C:\\Users\\SAO\\Desktop\\Dinoland pics\\4.png");
+		shopCategory.setPriority(0);
+		shopCategory.setShopCategoryName("Educations");
+		shopCategory.setShopCategoryDesc("Educations");
+		File thumbnailFile = new File("C:\\Users\\SAO\\Desktop\\Dinoland pics\\restaurant.png");
 		InputStream is = new FileInputStream(thumbnailFile);
 		ImageConstructor thumbnail = new ImageConstructor(thumbnailFile.getName(), is);
 		ShopCategoryExecution sce = shopCategoryService.addShopCategory(shopCategory, thumbnail);
 		assertEquals(ShopCategoryStateEnum.SUCCESS.getState(), sce.getState());
+	}
+	
+	@Test
+	@Ignore
+	public void testBUpdateShopCategory() throws ShopCategoryOperationException, FileNotFoundException{
+		ShopCategory shopCategory = new ShopCategory();
+		shopCategory.setPriority(10);
+		shopCategory.setShopCategoryId(8L);
+		shopCategory.setShopCategoryName("Restaurant");
+		shopCategory.setShopCategoryDesc("Food and beverage");
+		shopCategory.setParent(null);
+		File shopCategoryImg = new File("C:\\Users\\SAO\\Desktop\\Dinoland pics\\restaurant.png");
+		InputStream is = new FileInputStream(shopCategoryImg);
+		ImageConstructor imageConstructor = new ImageConstructor(shopCategoryImg.getName(), is);
+		ShopCategoryExecution shopCategoryExecution = shopCategoryService.modifyShopCategory(shopCategory,imageConstructor);
+		System.out.println("new file path is:" + shopCategoryExecution.getShopCategory().getShopCategoryImg());
 	}
 }

@@ -72,13 +72,13 @@ public class ProductServiceTest extends BaseTest {
 		product.setProductName("Formal Product");
 		product.setProductDesc("Formal product");
 		//create thumbnail file input stream
-		File thumbnailFile = new File("C:\\Users\\SAO\\Desktop\\Dinoland pics\\4.png");
+		File thumbnailFile = new File("C:\\Users\\SAO\\Desktop\\Dinoland pics\\bubble-tea.png");
 		InputStream is = new FileInputStream(thumbnailFile);
 		ImageConstructor thumbnail = new ImageConstructor(thumbnailFile.getName(), is);
 		//test by adding 2 product specific image input stream and add to a list
-		File productImg1 = new File("C:\\Users\\SAO\\Desktop\\Dinoland pics\\3.png");
+		File productImg1 = new File("C:\\Users\\SAO\\Desktop\\Dinoland pics\\black-pearl.png");
 		InputStream is1 = new FileInputStream(productImg1);
-		File productImg2 = new File("C:\\Users\\SAO\\Desktop\\Dinoland pics\\2.png");
+		File productImg2 = new File("C:\\Users\\SAO\\Desktop\\Dinoland pics\\white-pearl.png");
 		InputStream is2 = new FileInputStream(productImg2);
 		List<ImageConstructor> productImgList = new ArrayList<ImageConstructor>();
 		productImgList.add(new ImageConstructor(productImg1.getName(), is1));

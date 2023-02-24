@@ -6,7 +6,7 @@ public class WechatAuth {
 	//ID
 	private Long wechatAuthId;
 	// link between Wechat personal ID and Wechat Commercial ID
-	private String openID;
+	private String openId;
 	private Date createTime;
 	private UserInfo userInfo;
 	
@@ -16,11 +16,11 @@ public class WechatAuth {
 	public void setWechatAuthId(Long wechatAuthId) {
 		this.wechatAuthId = wechatAuthId;
 	}
-	public String getOpenID() {
-		return openID;
+	public String getOpenId() {
+		return openId;
 	}
-	public void setOpenID(String openID) {
-		this.openID = openID;
+	public void setOpenId(String openId) {
+		this.openId = openId;
 	}
 	public Date getCreateTime() {
 		return createTime;

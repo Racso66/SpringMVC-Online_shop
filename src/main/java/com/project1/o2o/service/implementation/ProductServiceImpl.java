@@ -21,6 +21,7 @@ import com.project1.o2o.util.ImageUtil;
 import com.project1.o2o.util.PageCalculator;
 import com.project1.o2o.util.PathUtil;
 
+
 @Service
 public class ProductServiceImpl implements ProductService {
 	@Autowired

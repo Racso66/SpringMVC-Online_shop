@@ -118,11 +118,11 @@ public class ImageUtil {
 	}
 
 	public static void main(String[] args) throws IOException {
-		Thumbnails.of(new File("C:\\Users\\SAO\\Desktop\\Dinoland pics\\2.jpg"))
-		.size(200, 200)
+		Thumbnails.of(new File("C:\\Users\\SAO\\Desktop\\Dinoland pics\\headline1.jpg"))
+		.size(800, 400)
 		.watermark(Positions.BOTTOM_RIGHT,ImageIO.read(new File(path + "/watermark.jpg")),0.25f)
 		.outputQuality(0.8f)
-		.toFile("C:\\Users\\SAO\\Desktop\\Dinoland pics\\2new.jpg");
+		.toFile("C:\\Users\\SAO\\Desktop\\Dinoland pics\\testheadline1.jpg");
 	}
 
 	/**

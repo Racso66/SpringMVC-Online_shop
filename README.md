@@ -10,5 +10,6 @@ Server used: Tomcat8<br /><br />
 
 ### Website instructions
 You may use the user name: testbind , and the password: 12345 To mess with the system through website's shop owner end: http://34.216.198.67/o2o/shopadmin/shoplist<br />
-Or you may just enter through the system's frontpage by going to the website: http://34.216.198.67/o2o/frontend/index
+Or you may just enter through the system's frontpage by going to the website: http://34.216.198.67/o2o/frontend/index <br />
 
+#### NOTE : *** Hit the F12 button to view in mobile version ***

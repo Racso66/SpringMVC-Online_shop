@@ -1,4 +1,5 @@
 # SpringMVC-Online_shop
+### <span style='color: red;'> *** Website taken down because of funding issues *** </span>
 
 An online shop created in Spring framework.<br />
 ### Basic Usage
@@ -8,7 +9,7 @@ Shop owners can use shop operations as administators to create and modify their 
 Coding tool used include: Java1.8, Html, javascript, css, sql(Mysql 8.0), XML, Redis, Junit (more in pom.xml)<br />
 Server used: Tomcat8<br /><br />
 
-### Website instructions <span style="color:red">Website down because of funding issue</span>
+### Website instructions 
 You may use the user name: testbind , and the password: 12345 To mess with the system through website's shop owner end: http://34.216.198.67/o2o/shopadmin/shoplist<br />
 Or you may just enter through the system's frontpage by going to the website: http://34.216.198.67/o2o/frontend/index <br />
 

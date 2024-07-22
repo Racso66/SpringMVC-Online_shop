@@ -1,5 +1,7 @@
 # SpringMVC-Online_shop
-### <span style='color: red;'> *** Website taken down because of funding issues *** </span>
+```diff
+- *** Website taken down because of funding issues ***
+```
 
 An online shop created in Spring framework.<br />
 ### Basic Usage
